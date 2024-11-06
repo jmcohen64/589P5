@@ -8,7 +8,8 @@
 % 
 %----------------------------------------------------------------
 % Driver for iterative methods
-methods = {'Jacobi','Gauss-Seidel','SOR'};
+methods = {'SOR'};
+%{'Jacobi','Gauss-Seidel',
 N = 29;
 omega_guess = [];
 tol = 1e-13;
@@ -17,7 +18,7 @@ xpos=3./4; ypos=1./3;
 imgdir=fullfile(pwd,'images');
 mkdir(imgdir);
 
-for j = 1%:numel(methods)
+for j = 1:numel(methods)
     method = methods{j};
     disp('----------------');
     disp(method);

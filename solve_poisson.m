@@ -99,10 +99,20 @@ function [u, omega, rho] = gauss_seidel(A, f, tol)
     % Put your Gauss-Seidel code here
     % ... or make it run with mockup code
     D = diag(diag(A));
+    L = tril(A,-1);
+    U = triu(A,1);
+    DLinv = inv(D+L);
     u = sparse(size(D,1),1);
+    rho = spectral_radius((DLinv*U));
+    assert(rho < 1, 'Gauss-Seidel: Spectral radius is not < 1');
+    while true
+        u_new = DLinv*(f - U * u);
+        if norm(u_new - u) < tol
+            break;
+        end
+        u = u_new;
+    end
     omega = 1;
-    rho = NaN;
-
     
 end
 
@@ -110,10 +120,44 @@ function [u, omega, rho] = sor(A, f, omega, tol)
     % Put your SOR code here.
     % If omega is empty, estimate and return optimized omega
     % ... or make it run with mockup code
+    if isempty(omega)
+        omega = 1.5;
+    end
     D = diag(diag(A));
+    L = tril(A,-1);
+    U = triu(A,1);
+    DwLinv = inv(D+omega*L);
     u = sparse(size(D,1),1);
-    omega = 1;
-    rho = NaN;
+    rho = spectral_radius(DwLinv*(omega*U + (omega-1)*D));
+    assert(rho < 1, 'SOR: Spectral radius is not < 1');
+    while true
+        u_new = DwLinv * omega * f - DwLinv * (omega * U + (omega-1)*D)*u;
+        if norm(u_new - u) < tol
+            break;
+        end
+        u = u_new;
+    end
+    
+    %sor1(A, f, tol, omega);
+end
+
+function [u, omega, rho] = sor1(A, f, tol, omega)
+    % Put your SOR code here.
+    % If omega is empty, estimate and return optimized omega
+    % ... or make it run with mockup code
+    arguments
+        A (1,:) double
+        f (1,:) double
+        tol (1,:) double 
+        omega (1,1) double = 1.5
+    end
+    D = diag(diag(A));
+    L = tril(A,-1);
+    U = triu(A,1);
+    omega = 1.5;
+    DwLinv = inv(D+omega*L);
+    u = sparse(size(D,1),1);
+    rho = spectral_radius(DwLinv*(omega*U + (omega-1)*D));
 end
 
 function rho = spectral_radius(A)
