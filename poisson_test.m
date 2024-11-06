@@ -17,7 +17,7 @@ xpos=3./4; ypos=1./3;
 imgdir=fullfile(pwd,'images');
 mkdir(imgdir);
 
-for j = 1:numel(methods)
+for j = 1%:numel(methods)
     method = methods{j};
     disp('----------------');
     disp(method);
@@ -39,24 +39,24 @@ for j = 1:numel(methods)
     pause(2);
 end
 
-% Quiver plot of the gradient
-[X, Y] = meshgrid(0:(N+1), 0:(N+1));
-[FX, FY] = gradient(u);
-clf;
-quiver(X,Y,FX,FY);
-drawnow;
-pause(2);
-filename=['gradient',num2str(N),'.png'];
-saveas(gcf,fullfile(imgdir,filename));
-
-% Cuthill-McKee reordering
-d = symrcm(A);
-spy(A(d,d));
-filename=['cuthill_mckee',num2str(N),'.png'];
-saveas(gcf,fullfile(imgdir,filename));
-
-% Approximate minimum-degree reordering
-r = amd(A);
-spy(A(r,r));
-filename=['amd',num2str(N),'.png'];
-saveas(gcf,fullfile(imgdir,filename));
+% % Quiver plot of the gradient
+% [X, Y] = meshgrid(0:(N+1), 0:(N+1));
+% [FX, FY] = gradient(u);
+% clf;
+% quiver(X,Y,FX,FY);
+% drawnow;
+% pause(2);
+% filename=['gradient',num2str(N),'.png'];
+% saveas(gcf,fullfile(imgdir,filename));
+% 
+% % Cuthill-McKee reordering
+% d = symrcm(A);
+% spy(A(d,d));
+% filename=['cuthill_mckee',num2str(N),'.png'];
+% saveas(gcf,fullfile(imgdir,filename));
+% 
+% % Approximate minimum-degree reordering
+% r = amd(A);
+% spy(A(r,r));
+% filename=['amd',num2str(N),'.png'];
+% saveas(gcf,fullfile(imgdir,filename));
