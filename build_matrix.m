@@ -1,38 +1,65 @@
 function A = build_matrix(N)
     M = N.^2;
     h = 1/(N+1);
-    %L = sparse(M,M);
-    %initialzie the two nxn matrices
-    J = 4*eye(N);
-    S = (-1/h^2)*eye(N);
-    %initialize A as nxn cell array (matrix) with elements that are nxn matrices
-    A = cellmat(N,N,N,N);
-    % modify J to add -1 to the elements 1 off of the diagonal
-    for i =1:N
+    A = sparse(M,M);
+    J = 4*eye(N) - diag(ones(N-1, 1), 1) - diag(ones(N-1, 1), -1);
+    S = -1*eye(N);
+    for i = 1:N
         for j = 1:N
-            if abs(i-j) == 1
-                J(i,j) = -1;
+            % Row and column indices for the block structure
+            row_idx = (i-1)*N + (1:N);  % Row indices for the block
+            col_idx = (j-1)*N + (1:N);  % Column indices for the block
+            
+            if i == j
+                % Diagonal block: Use J matrix
+                A(row_idx, col_idx) = J;
+            elseif abs(i - j) == 1
+                % Adjacent blocks: Use S matrix for boundary conditions
+                A(row_idx, col_idx) = S;  % Boundary conditions
             end
         end
     end
-    %scale J
-    J = (1/h^2)*J;
-    %modify our matrix of matrices
-    %add J to the diagonal and S to 1 off the diagonal; rest are 0s by
-    %construction of A
-    for i =1:N
-        for j = 1:N
-            if i ==j
-                A{i,j} = J;
-            elseif abs(i-j) == 1
-                A{i,j} = S;
-            end
-        end
-    end
-    %convert to matrix
-    A = full(cell2mat(A));
-    
+    A = (1/h^2)*A;
+    A = full(A);
 end
+
+
+
+% function A = build_matrix(N)
+%     M = N.^2;
+%     h = 1/(N+1);
+%     %L = sparse(M,M);
+%     %initialzie the two nxn matrices
+%     J = 4*eye(N);
+%     S = (-1/h^2)*eye(N);
+%     %initialize A as nxn cell array (matrix) with elements that are nxn matrices
+%     A = cellmat(N,N,N,N);
+%     % modify J to add -1 to the elements 1 off of the diagonal
+%     for i =1:N
+%         for j = 1:N
+%             if abs(i-j) == 1
+%                 J(i,j) = -1;
+%             end
+%         end
+%     end
+%     %scale J
+%     J = (1/h^2)*J;
+%     %modify our matrix of matrices
+%     %add J to the diagonal and S to 1 off the diagonal; rest are 0s by
+%     %construction of A
+%     for i =1:N
+%         for j = 1:N
+%             if i ==j
+%                 A{i,j} = J;
+%             elseif abs(i-j) == 1
+%                 A{i,j} = S;
+%             end
+%         end
+%     end
+%     %convert to matrix
+%     A = full(cell2mat(A));
+% 
+% end
 
 
 % function A = build_matrix(N)
